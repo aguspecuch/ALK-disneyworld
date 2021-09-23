@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import ar.com.alkemy.disneyworld.entities.Pelicula;
 import ar.com.alkemy.disneyworld.entities.Personaje;
@@ -24,6 +25,7 @@ import ar.com.alkemy.disneyworld.services.PersonajeService;
 import ar.com.alkemy.disneyworld.services.SerieService;
 
 @RestController
+@RequestMapping("/characters")
 public class PersonajeController {
 
     @Autowired
@@ -35,7 +37,7 @@ public class PersonajeController {
     @Autowired
     SerieService serieService;
 
-    @GetMapping("/characters")
+    @GetMapping
     public ResponseEntity<List<PersonajeResponse>> listarPersonajes() {
 
         List<Personaje> personajes = personajeService.findAll();
@@ -53,7 +55,7 @@ public class PersonajeController {
         return ResponseEntity.ok(lista);
     }
 
-    @PostMapping("/characters")
+    @PostMapping
     public ResponseEntity<GenericResponse> create(@RequestBody PersonajeModel personajeModel) {
 
         List<Pelicula> peliculas = new ArrayList<>();
@@ -84,7 +86,7 @@ public class PersonajeController {
         return ResponseEntity.ok(r);
     }
 
-    @GetMapping("/characters/details")
+    @GetMapping("/details")
     public ResponseEntity<List<PersonajeModel>> detallarPersonajes() {
 
         List<Personaje> personajes = personajeService.findAll();
@@ -123,12 +125,12 @@ public class PersonajeController {
         return ResponseEntity.ok(lista);
     }
 
-    @DeleteMapping("/characters")
-    public ResponseEntity<GenericResponse> delete(@RequestParam Integer id) {
+    @DeleteMapping
+    public ResponseEntity<GenericResponse> delete(@RequestParam (value = "id") Integer id) {
         Personaje personaje = personajeService.findById(id);
         GenericResponse r = new GenericResponse();
 
-        if ( personaje != null ) {
+        if (personaje != null) {
 
             r.isOk = true;
             r.id = personaje.getPersonajeId();
@@ -142,6 +144,18 @@ public class PersonajeController {
         r.message = "El id ingresado no corresponde a ningun personaje.";
 
         return ResponseEntity.badRequest().body(r);
+    }
+
+    @GetMapping(params = "name")
+    public ResponseEntity<PersonajeResponse> findByNombre(@RequestParam (value = "name") String name) {
+
+        Personaje personaje = personajeService.findByName(name);
+        PersonajeResponse p = new PersonajeResponse();
+        p.nombre = personaje.getNombre();
+        p.imagen = personaje.getImagen();
+
+        return ResponseEntity.ok(p);
+
     }
 
 }
