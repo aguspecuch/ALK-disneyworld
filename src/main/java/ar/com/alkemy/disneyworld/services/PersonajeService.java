@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ar.com.alkemy.disneyworld.entities.Pelicula;
 import ar.com.alkemy.disneyworld.entities.Personaje;
+import ar.com.alkemy.disneyworld.entities.Serie;
 import ar.com.alkemy.disneyworld.repos.PersonajeRepository;
 
 @Service
@@ -14,7 +16,23 @@ public class PersonajeService {
     @Autowired
     PersonajeRepository personajeRepo;
 
-    public Personaje create(Personaje personaje) {
+    public Personaje create(String nombre, String imagen, Integer edad, Double peso, String historia, List<Pelicula> peliculas, List<Serie> series) {
+        
+        Personaje personaje = new Personaje();
+        personaje.setNombre(nombre);
+        personaje.setImagen(imagen);
+        personaje.setEdad(edad);
+        personaje.setPeso(peso);
+        personaje.setHistoria(historia);
+
+        for (Pelicula pelicula : peliculas) {
+            personaje.agregarPelicula(pelicula);
+        }
+
+        for (Serie serie : series) {
+            personaje.agregarSerie(serie);
+        }
+        
         return personajeRepo.save(personaje);
     }
 

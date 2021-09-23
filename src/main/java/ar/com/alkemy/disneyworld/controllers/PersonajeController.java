@@ -5,26 +5,33 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.alkemy.disneyworld.entities.Pelicula;
 import ar.com.alkemy.disneyworld.entities.Personaje;
 import ar.com.alkemy.disneyworld.entities.Serie;
+import ar.com.alkemy.disneyworld.models.ContenidoModel;
+import ar.com.alkemy.disneyworld.models.PersonajeModel;
 import ar.com.alkemy.disneyworld.models.response.GenericResponse;
 import ar.com.alkemy.disneyworld.models.response.PersonajeResponse;
+import ar.com.alkemy.disneyworld.services.PeliculaService;
 import ar.com.alkemy.disneyworld.services.PersonajeService;
+import ar.com.alkemy.disneyworld.services.SerieService;
 
 @RestController
 public class PersonajeController {
 
     @Autowired
     PersonajeService personajeService;
+
+    @Autowired
+    PeliculaService peliculaService;
+
+    @Autowired
+    SerieService serieService;
 
     @GetMapping("/characters")
     public ResponseEntity<List<PersonajeResponse>> listarPersonajes() {
@@ -44,224 +51,74 @@ public class PersonajeController {
         return ResponseEntity.ok(lista);
     }
 
-    @GetMapping("/characters/all")
-    public ResponseEntity<List<Personaje>> listarTodoPersonajes() {
-
-        return ResponseEntity.ok(personajeService.findAll());
-    }
-
     @PostMapping("/characters")
-    public ResponseEntity<GenericResponse> create(@RequestBody Personaje personaje) {
+    public ResponseEntity<GenericResponse> create(@RequestBody PersonajeModel personajeModel) {
 
-        GenericResponse r = new GenericResponse();
+        List<Pelicula> peliculas = new ArrayList<>();
+        List<Serie> series = new ArrayList<>();
 
-        if (personajeService.chequearDatos(personaje)) {
+        for (ContenidoModel pelicula : personajeModel.peliculas) {
 
-            Personaje p = personajeService.create(personaje);
-
-            r.id = p.getPersonajeId();
-            r.isOk = true;
-            r.message = "Personaje creado con exito.";
-
-            return ResponseEntity.ok(r);
+            Pelicula p = peliculaService.findByPeliculaId(pelicula.id);
+            peliculas.add(p);
 
         }
 
-        r.isOk = false;
-        r.message = "ERROR. Personaje ya registrado.";
+        for (ContenidoModel serie : personajeModel.series) {
 
-        return ResponseEntity.badRequest().body(r);
-    }
-
-    @PutMapping("/characters/name")
-    public ResponseEntity<GenericResponse> actualizarNombre(@RequestParam Integer id, @RequestBody String name) {
-
-        Personaje personaje = personajeService.findById(id);
-        GenericResponse r = new GenericResponse();
-
-        if (personaje != null) {
-            personaje.setNombre(name);
-            personajeService.update(personaje);
-
-            r.isOk = true;
-            r.id = personaje.getPersonajeId();
-            r.message = "Nombre actualizado con exito.";
-
-            return ResponseEntity.ok(r);
+            Serie s = serieService.findBySerieId(serie.id);
+            series.add(s);
 
         }
 
-        r.isOk = false;
-        r.message = "No se encontro ningun personaje con ese id.";
+        Personaje personaje = personajeService.create(personajeModel.nombre, personajeModel.imagen, personajeModel.edad,
+                personajeModel.peso, personajeModel.historia, peliculas, series);
 
-        return ResponseEntity.badRequest().body(r);
+        GenericResponse r = new GenericResponse();
+        r.isOk = true;
+        r.id = personaje.getPersonajeId();
+        r.message = "Personaje creado con exito.";
+
+        return ResponseEntity.ok(r);
     }
 
-    @PutMapping("/characters/edad")
-    public ResponseEntity<GenericResponse> actualizarEdad(@RequestParam Integer id, @RequestBody Integer edad) {
+    @GetMapping("/characters/details")
+    public ResponseEntity<List<PersonajeModel>> detallarPersonajes() {
 
-        Personaje personaje = personajeService.findById(id);
-        GenericResponse r = new GenericResponse();
+        List<Personaje> personajes = personajeService.findAll();
+        List<PersonajeModel> lista = new ArrayList<>();
 
-        if (personaje != null) {
-            personaje.setEdad(edad);
-            personajeService.update(personaje);
+        for (Personaje personaje : personajes) {
 
-            r.isOk = true;
-            r.id = personaje.getPersonajeId();
-            r.message = "Edad actualizada con exito.";
+            PersonajeModel p = new PersonajeModel();
+            p.imagen = personaje.getImagen();
+            p.nombre = personaje.getNombre();
+            p.edad = personaje.getEdad();
+            p.historia = personaje.getHistoria();
+            p.peso = personaje.getPeso();
 
-            return ResponseEntity.ok(r);
+            for (Pelicula pelicula : personaje.getPeliculas()) {
 
+                ContenidoModel c = new ContenidoModel();
+                c.id = pelicula.getPeliculaId();
+                c.titulo = pelicula.getTitulo();
+
+                p.peliculas.add(c);
+            }
+
+            for (Serie serie : personaje.getSeries()) {
+
+                ContenidoModel c = new ContenidoModel();
+                c.id = serie.getSerieId();
+                c.titulo = serie.getTitulo();
+
+                p.series.add(c);
+            }
+
+            lista.add(p);
         }
 
-        r.isOk = false;
-        r.message = "No se encontro ningun personaje con ese id.";
-
-        return ResponseEntity.badRequest().body(r);
+        return ResponseEntity.ok(lista);
     }
 
-    @PutMapping("/characters/imagen")
-    public ResponseEntity<GenericResponse> actualizarImagen(@RequestParam Integer id, @RequestBody String imagen) {
-
-        Personaje personaje = personajeService.findById(id);
-        GenericResponse r = new GenericResponse();
-
-        if (personaje != null) {
-            personaje.setImagen(imagen);
-            personajeService.update(personaje);
-
-            r.isOk = true;
-            r.id = personaje.getPersonajeId();
-            r.message = "Imagen actualizada con exito.";
-
-            return ResponseEntity.ok(r);
-
-        }
-
-        r.isOk = false;
-        r.message = "No se encontro ningun personaje con ese id.";
-
-        return ResponseEntity.badRequest().body(r);
-    }
-
-    @PutMapping("/characters/peso")
-    public ResponseEntity<GenericResponse> actualizarPeso(@RequestParam Integer id, @RequestBody Double peso) {
-
-        Personaje personaje = personajeService.findById(id);
-        GenericResponse r = new GenericResponse();
-
-        if (personaje != null) {
-            personaje.setPeso(peso);
-            personajeService.update(personaje);
-
-            r.isOk = true;
-            r.id = personaje.getPersonajeId();
-            r.message = "Peso actualizado con exito.";
-
-            return ResponseEntity.ok(r);
-
-        }
-
-        r.isOk = false;
-        r.message = "No se encontro ningun personaje con ese id.";
-
-        return ResponseEntity.badRequest().body(r);
-    }
-
-    @PutMapping("/characters/historia")
-    public ResponseEntity<GenericResponse> actualizarHistoria(@RequestParam Integer id, @RequestBody String historia) {
-
-        Personaje personaje = personajeService.findById(id);
-        GenericResponse r = new GenericResponse();
-
-        if (personaje != null) {
-            personaje.setHistoria(historia);
-            personajeService.update(personaje);
-
-            r.isOk = true;
-            r.id = personaje.getPersonajeId();
-            r.message = "Historia actualizada con exito.";
-
-            return ResponseEntity.ok(r);
-
-        }
-
-        r.isOk = false;
-        r.message = "No se encontro ningun personaje con ese id.";
-
-        return ResponseEntity.badRequest().body(r);
-    }
-
-    @PutMapping("/characters/peliculas")
-    public ResponseEntity<GenericResponse> agregarPelicula(@RequestParam Integer id, @RequestBody Pelicula pelicula) {
-
-        Personaje personaje = personajeService.findById(id);
-        GenericResponse r = new GenericResponse();
-
-        if (personaje != null) {
-            personaje.agregarPelicula(pelicula);
-            personajeService.update(personaje);
-
-            r.isOk = true;
-            r.id = personaje.getPersonajeId();
-            r.message = "Pelicula agregada con exito.";
-
-            return ResponseEntity.ok(r);
-
-        }
-
-        r.isOk = false;
-        r.message = "No se encontro ningun personaje con ese id.";
-
-        return ResponseEntity.badRequest().body(r);
-    }
-
-    @PutMapping("/characters/series")
-    public ResponseEntity<GenericResponse> agregarSerie(@RequestParam Integer id, @RequestBody Serie serie) {
-
-        Personaje personaje = personajeService.findById(id);
-        GenericResponse r = new GenericResponse();
-
-        if (personaje != null) {
-            personaje.agregarSerie(serie);
-            personajeService.update(personaje);
-
-            r.isOk = true;
-            r.id = personaje.getPersonajeId();
-            r.message = "Serie agregada con exito.";
-
-            return ResponseEntity.ok(r);
-
-        }
-
-        r.isOk = false;
-        r.message = "No se encontro ningun personaje con ese id.";
-
-        return ResponseEntity.badRequest().body(r);
-    }
-
-    @DeleteMapping("/characters")
-    public ResponseEntity<GenericResponse> delete(@RequestParam Integer id) {
-
-        Personaje personaje = personajeService.findById(id);
-        GenericResponse r = new GenericResponse();
-
-        if (personaje != null) {
-
-            personajeService.delete(personaje);
-
-            r.isOk = true;
-            r.id = personaje.getPersonajeId();
-            r.message = "Personaje eliminado con exito.";
-
-            return ResponseEntity.ok(r);
-
-        }
-
-        r.isOk = false;
-        r.message = "No se encontro ningun personaje con ese id.";
-
-        return ResponseEntity.badRequest().body(r);
-    }
 }

@@ -25,8 +25,8 @@ public class Serie {
     @Column(name="serie_id")
     private Integer serieId;
     private String imagen;
-    private String nombre;
-    @Column(name="fecha_creacion")
+    private String titulo;
+    @Column(name="fecha_de_creacion")
     @Temporal(TemporalType.DATE)
     private Date fechaCreacion;
     private Integer calificacion;
@@ -49,11 +49,11 @@ public class Serie {
     public void setImagen(String imagen) {
         this.imagen = imagen;
     }
-    public String getNombre() {
-        return nombre;
+    public String getTitulo() {
+        return titulo;
     }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
     public Date getFechaCreacion() {
         return fechaCreacion;
