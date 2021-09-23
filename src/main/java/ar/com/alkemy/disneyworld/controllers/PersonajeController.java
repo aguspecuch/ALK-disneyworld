@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.alkemy.disneyworld.entities.Pelicula;
@@ -119,6 +121,27 @@ public class PersonajeController {
         }
 
         return ResponseEntity.ok(lista);
+    }
+
+    @DeleteMapping("/characters")
+    public ResponseEntity<GenericResponse> delete(@RequestParam Integer id) {
+        Personaje personaje = personajeService.findById(id);
+        GenericResponse r = new GenericResponse();
+
+        if ( personaje != null ) {
+
+            r.isOk = true;
+            r.id = personaje.getPersonajeId();
+            r.message = "Personaje eliminado con exito";
+
+            return ResponseEntity.ok(r);
+
+        }
+
+        r.isOk = false;
+        r.message = "El id ingresado no corresponde a ningun personaje.";
+
+        return ResponseEntity.badRequest().body(r);
     }
 
 }
