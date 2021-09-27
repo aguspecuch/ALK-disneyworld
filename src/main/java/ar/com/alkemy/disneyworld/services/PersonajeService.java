@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import ar.com.alkemy.disneyworld.entities.Pelicula;
 import ar.com.alkemy.disneyworld.entities.Personaje;
-import ar.com.alkemy.disneyworld.entities.Serie;
 import ar.com.alkemy.disneyworld.repos.PersonajeRepository;
 
 @Service
@@ -18,9 +17,6 @@ public class PersonajeService {
     PersonajeRepository personajeRepo;
 
     @Autowired
-    SerieService serieService;
-
-    @Autowired
     PeliculaService peliculaService;
 
     public Personaje create(Personaje personaje) {
@@ -28,7 +24,7 @@ public class PersonajeService {
     }
 
     public Personaje create(String nombre, String imagen, Integer edad, Double peso, String historia,
-            List<Pelicula> peliculas, List<Serie> series) {
+            List<Pelicula> peliculas) {
 
         Personaje personaje = new Personaje();
         personaje.setNombre(nombre);
@@ -39,10 +35,6 @@ public class PersonajeService {
 
         for (Pelicula pelicula : peliculas) {
             personaje.agregarPelicula(pelicula);
-        }
-
-        for (Serie serie : series) {
-            personaje.agregarSerie(serie);
         }
 
         return personajeRepo.save(personaje);
@@ -79,7 +71,7 @@ public class PersonajeService {
     }
 
     public List<Personaje> findByPeso(Double peso) {
-        
+
         List<Personaje> p = new ArrayList<>();
 
         for (Personaje personaje : this.findAll()) {
@@ -91,21 +83,6 @@ public class PersonajeService {
 
         return p;
 
-    }
-
-    public List<Personaje> findBySerie(Integer serieId) {
-
-        Serie s = serieService.findBySerieId(serieId);
-        List<Personaje> p = new ArrayList<>();
-
-        for (Personaje personaje : this.findAll()) {
-
-            if (personaje.getSeries().contains(s)) {
-                p.add(personaje);
-            }
-        }
-
-        return p;
     }
 
     public List<Personaje> findByPelicula(Integer movieId) {
@@ -124,6 +101,11 @@ public class PersonajeService {
     }
 
     public void delete(Personaje personaje) {
+
+        for (Pelicula pelicula : personaje.getPeliculas()) {
+            pelicula.getPersonajes().remove(personaje);
+        }
+        
         personajeRepo.delete(personaje);
     }
 

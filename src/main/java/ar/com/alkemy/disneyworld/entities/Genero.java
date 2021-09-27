@@ -25,8 +25,6 @@ public class Genero {
     private String imagen;
     @OneToMany(mappedBy = "genero", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Pelicula> peliculas = new ArrayList<>();
-    @OneToMany(mappedBy = "genero", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Serie> series = new ArrayList<>();
     
     public Integer getGeneroId() {
         return generoId;
@@ -52,13 +50,5 @@ public class Genero {
     public void setPeliculas(List<Pelicula> peliculas) {
         this.peliculas = peliculas;
     }
-    public List<Serie> getSeries() {
-        return series;
-    }
-    public void setSeries(List<Serie> series) {
-        this.series = series;
-    }
-
-    
 
 }

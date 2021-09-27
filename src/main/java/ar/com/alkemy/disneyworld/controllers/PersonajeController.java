@@ -15,14 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import ar.com.alkemy.disneyworld.entities.Pelicula;
 import ar.com.alkemy.disneyworld.entities.Personaje;
-import ar.com.alkemy.disneyworld.entities.Serie;
-import ar.com.alkemy.disneyworld.models.ContenidoModel;
 import ar.com.alkemy.disneyworld.models.PersonajeModel;
+import ar.com.alkemy.disneyworld.models.PeliculaModel;
 import ar.com.alkemy.disneyworld.models.response.GenericResponse;
 import ar.com.alkemy.disneyworld.models.response.PersonajeResponse;
 import ar.com.alkemy.disneyworld.services.PeliculaService;
 import ar.com.alkemy.disneyworld.services.PersonajeService;
-import ar.com.alkemy.disneyworld.services.SerieService;
 
 @RestController
 @RequestMapping("/characters")
@@ -33,9 +31,6 @@ public class PersonajeController {
 
     @Autowired
     PeliculaService peliculaService;
-
-    @Autowired
-    SerieService serieService;
 
     @GetMapping
     public ResponseEntity<List<PersonajeResponse>> listarPersonajes() {
@@ -72,24 +67,16 @@ public class PersonajeController {
     public ResponseEntity<GenericResponse> create2(@RequestBody PersonajeModel personajeModel) {
 
         List<Pelicula> peliculas = new ArrayList<>();
-        List<Serie> series = new ArrayList<>();
 
-        for (ContenidoModel pelicula : personajeModel.peliculas) {
+        for (PeliculaModel pelicula : personajeModel.peliculas) {
 
             Pelicula p = peliculaService.findByPeliculaId(pelicula.id);
             peliculas.add(p);
 
         }
 
-        for (ContenidoModel serie : personajeModel.series) {
-
-            Serie s = serieService.findBySerieId(serie.id);
-            series.add(s);
-
-        }
-
         Personaje personaje = personajeService.create(personajeModel.nombre, personajeModel.imagen, personajeModel.edad,
-                personajeModel.peso, personajeModel.historia, peliculas, series);
+                personajeModel.peso, personajeModel.historia, peliculas);
 
         GenericResponse r = new GenericResponse();
         r.isOk = true;
@@ -212,32 +199,6 @@ public class PersonajeController {
 
     }
 
-    @GetMapping(params = "series")
-    public ResponseEntity<?> findBySerie(@RequestParam(value = "series") Integer serieId) {
-
-        List<Personaje> personajes = personajeService.findBySerie(serieId);
-
-        if (personajes.isEmpty()) {
-
-            GenericResponse r = new GenericResponse();
-            r.isOk = false;
-            r.message = "No existe ningun personaje registrado de esa serie";
-
-            return ResponseEntity.badRequest().body(r);
-        }
-
-        List<PersonajeModel> lista = new ArrayList<>();
-
-        for (Personaje personaje : personajes) {
-
-            PersonajeModel p = this.detallarPersonaje(personaje);
-            lista.add(p);
-        }
-
-        return ResponseEntity.ok(lista);
-
-    }
-
     @GetMapping(params = "movies")
     public ResponseEntity<?> findByPelicula(@RequestParam(value = "movies") Integer movieId) {
 
@@ -276,23 +237,15 @@ public class PersonajeController {
 
         for (Pelicula pelicula : personaje.getPeliculas()) {
 
-            ContenidoModel c = new ContenidoModel();
+            PeliculaModel c = new PeliculaModel();
             c.id = pelicula.getPeliculaId();
             c.titulo = pelicula.getTitulo();
 
             p.peliculas.add(c);
         }
 
-        for (Serie serie : personaje.getSeries()) {
-
-            ContenidoModel c = new ContenidoModel();
-            c.id = serie.getSerieId();
-            c.titulo = serie.getTitulo();
-
-            p.series.add(c);
-        }
-
         return p;
     }
 
 }
+

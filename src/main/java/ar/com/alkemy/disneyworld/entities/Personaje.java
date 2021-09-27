@@ -3,10 +3,8 @@ package ar.com.alkemy.disneyworld.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,12 +26,9 @@ public class Personaje {
     private Integer edad;
     private Double peso;
     private String historia;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "pelicula_personaje", joinColumns = @JoinColumn(name = "personaje_id"), inverseJoinColumns = @JoinColumn(name = "pelicula_id"))
     private List<Pelicula> peliculas = new ArrayList<>();
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "serie_personaje", joinColumns = @JoinColumn(name = "personaje_id"), inverseJoinColumns = @JoinColumn(name = "serie_id"))
-    private List<Serie> series = new ArrayList<>();
 
     public Integer getPersonajeId() {
         return personajeId;
@@ -77,12 +72,6 @@ public class Personaje {
     public void setPeliculas(List<Pelicula> peliculas) {
         this.peliculas = peliculas;
     }
-    public List<Serie> getSeries() {
-        return series;
-    }
-    public void setSeries(List<Serie> series) {
-        this.series = series;
-    }
 
     // RELACION BIDIRECCIONAL
 
@@ -91,10 +80,4 @@ public class Personaje {
         pelicula.getPersonajes().add(this);
     }
 
-    public void agregarSerie(Serie serie) {
-        this.series.add(serie);
-        serie.getPersonajes().add(this);
-    }
-
-    
 }

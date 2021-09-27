@@ -10,6 +10,5 @@ public class PersonajeModel {
     public Integer edad;
     public Double peso;
     public String historia;
-    public List<ContenidoModel> peliculas = new ArrayList<>();
-    public List<ContenidoModel> series = new ArrayList<>();
+    public List<PeliculaModel> peliculas = new ArrayList<>();
 }

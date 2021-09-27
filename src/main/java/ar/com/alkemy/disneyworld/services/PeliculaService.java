@@ -12,6 +12,19 @@ public class PeliculaService {
     @Autowired
     PeliculaRepository peliculaRepo;
 
+    public Pelicula create(Pelicula pelicula) {
+        return peliculaRepo.save(pelicula);
+    }
+
+    public void update(Pelicula pelicula) {
+        peliculaRepo.save(pelicula);
+    }
+
+    public void delete(Integer id) {
+        Pelicula pelicula = this.findByPeliculaId(id);
+        peliculaRepo.delete(pelicula);
+    }
+
     public Pelicula findByPeliculaId(Integer id) {
         return peliculaRepo.findByPeliculaId(id);
     }
