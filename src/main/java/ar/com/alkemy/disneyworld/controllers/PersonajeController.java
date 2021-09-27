@@ -53,11 +53,24 @@ public class PersonajeController {
     @PostMapping
     public ResponseEntity<GenericResponse> create(@RequestBody Personaje personaje) {
 
-        personajeService.create(personaje);
+        GenericResponse r = new GenericResponse();
 
-        GenericResponse r = new GenericResponse(true, personaje.getPersonajeId(), "Personaje creado con exito.");
+        if (personajeService.chequearDatos(personaje)) {
 
-        return ResponseEntity.ok(r);
+            personajeService.create(personaje);
+
+            r.isOk = true;
+            r.id = personaje.getPersonajeId();
+            r.message = "Personaje creado con exito.";
+
+            return ResponseEntity.ok(r);
+        }
+
+        r.isOk = false;
+        r.message = "Ya se encuentra registrado un personaje con el mismo nombre";
+
+        return ResponseEntity.badRequest().body(r);
+
     }
 
     @PostMapping("/2")

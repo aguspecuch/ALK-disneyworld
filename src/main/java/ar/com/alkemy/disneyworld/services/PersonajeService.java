@@ -105,16 +105,16 @@ public class PersonajeService {
         for (Pelicula pelicula : personaje.getPeliculas()) {
             pelicula.getPersonajes().remove(personaje);
         }
-        
+
         personajeRepo.delete(personaje);
     }
 
     public boolean chequearDatos(Personaje personaje) {
 
         if (!chequearNombre(personaje.getNombre())) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
 
     }
@@ -125,9 +125,9 @@ public class PersonajeService {
 
         if (p != null) {
             return false;
-        } else {
-            return true;
         }
+        return true;
+
     }
 
 }
