@@ -5,10 +5,10 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -30,8 +30,7 @@ public class Serie {
     @Temporal(TemporalType.DATE)
     private Date fechaCreacion;
     private Integer calificacion;
-    @ManyToMany
-    @JoinTable(name = "serie_personaje", joinColumns = @JoinColumn(name = "serie_id"), inverseJoinColumns = @JoinColumn(name = "personaje_id"))
+    @ManyToMany(mappedBy = "series", fetch = FetchType.LAZY)
     private List<Personaje> personajes;
     @ManyToOne
     @JoinColumn(name = "genero_id", referencedColumnName = "genero_id")

@@ -3,12 +3,16 @@ package ar.com.alkemy.disneyworld.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -24,9 +28,11 @@ public class Personaje {
     private Integer edad;
     private Double peso;
     private String historia;
-    @ManyToMany(mappedBy = "personajes")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "pelicula_personaje", joinColumns = @JoinColumn(name = "personaje_id"), inverseJoinColumns = @JoinColumn(name = "pelicula_id"))
     private List<Pelicula> peliculas = new ArrayList<>();
-    @ManyToMany(mappedBy = "personajes")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "serie_personaje", joinColumns = @JoinColumn(name = "personaje_id"), inverseJoinColumns = @JoinColumn(name = "serie_id"))
     private List<Serie> series = new ArrayList<>();
 
     public Integer getPersonajeId() {

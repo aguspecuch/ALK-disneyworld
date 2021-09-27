@@ -9,5 +9,6 @@ import ar.com.alkemy.disneyworld.entities.Serie;
 public interface SerieRepository extends JpaRepository <Serie, Integer>{
     
     Serie findBySerieId(Integer id);
+    Serie findByTitulo(String titulo);
     
 }

@@ -1,6 +1,7 @@
 package ar.com.alkemy.disneyworld.services;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,19 @@ public class PersonajeService {
     @Autowired
     PersonajeRepository personajeRepo;
 
-    public Personaje create(String nombre, String imagen, Integer edad, Double peso, String historia, List<Pelicula> peliculas, List<Serie> series) {
-        
+    @Autowired
+    SerieService serieService;
+
+    @Autowired
+    PeliculaService peliculaService;
+
+    public Personaje create(Personaje personaje) {
+        return personajeRepo.save(personaje);
+    }
+
+    public Personaje create(String nombre, String imagen, Integer edad, Double peso, String historia,
+            List<Pelicula> peliculas, List<Serie> series) {
+
         Personaje personaje = new Personaje();
         personaje.setNombre(nombre);
         personaje.setImagen(imagen);
@@ -32,7 +44,7 @@ public class PersonajeService {
         for (Serie serie : series) {
             personaje.agregarSerie(serie);
         }
-        
+
         return personajeRepo.save(personaje);
     }
 
@@ -50,6 +62,65 @@ public class PersonajeService {
 
     public Personaje findByName(String nombre) {
         return personajeRepo.findByNombre(nombre);
+    }
+
+    public List<Personaje> findByEdad(Integer edad) {
+
+        List<Personaje> p = new ArrayList<>();
+
+        for (Personaje personaje : this.findAll()) {
+
+            if (personaje.getEdad() == edad) {
+                p.add(personaje);
+            }
+        }
+
+        return p;
+    }
+
+    public List<Personaje> findByPeso(Double peso) {
+        
+        List<Personaje> p = new ArrayList<>();
+
+        for (Personaje personaje : this.findAll()) {
+
+            if (personaje.getPeso().doubleValue() == peso) {
+                p.add(personaje);
+            }
+        }
+
+        return p;
+
+    }
+
+    public List<Personaje> findBySerie(Integer serieId) {
+
+        Serie s = serieService.findBySerieId(serieId);
+        List<Personaje> p = new ArrayList<>();
+
+        for (Personaje personaje : this.findAll()) {
+
+            if (personaje.getSeries().contains(s)) {
+                p.add(personaje);
+            }
+        }
+
+        return p;
+    }
+
+    public List<Personaje> findByPelicula(Integer movieId) {
+
+        Pelicula peli = peliculaService.findByPeliculaId(movieId);
+        List<Personaje> p = new ArrayList<>();
+
+        for (Personaje personaje : this.findAll()) {
+
+            if (personaje.getPeliculas().contains(peli)) {
+                p.add(personaje);
+            }
+        }
+
+        return p;
     }
 
     public void delete(Personaje personaje) {

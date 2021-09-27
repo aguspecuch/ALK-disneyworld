@@ -9,4 +9,5 @@ import ar.com.alkemy.disneyworld.entities.Pelicula;
 public interface PeliculaRepository extends JpaRepository <Pelicula, Integer>{
     
     Pelicula findByPeliculaId(Integer id);
+    Pelicula findByTitulo(String titulo);
 }

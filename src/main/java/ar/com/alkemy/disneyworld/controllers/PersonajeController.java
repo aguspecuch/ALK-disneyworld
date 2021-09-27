@@ -56,7 +56,20 @@ public class PersonajeController {
     }
 
     @PostMapping
-    public ResponseEntity<GenericResponse> create(@RequestBody PersonajeModel personajeModel) {
+    public ResponseEntity<GenericResponse> create(@RequestBody Personaje personaje) {
+
+        personajeService.create(personaje);
+
+        GenericResponse r = new GenericResponse();
+        r.isOk = true;
+        r.id = personaje.getPersonajeId();
+        r.message = "Personaje creado con exito.";
+
+        return ResponseEntity.ok(r);
+    }
+
+    @PostMapping("/2")
+    public ResponseEntity<GenericResponse> create2(@RequestBody PersonajeModel personajeModel) {
 
         List<Pelicula> peliculas = new ArrayList<>();
         List<Serie> series = new ArrayList<>();
@@ -94,43 +107,24 @@ public class PersonajeController {
 
         for (Personaje personaje : personajes) {
 
-            PersonajeModel p = new PersonajeModel();
-            p.imagen = personaje.getImagen();
-            p.nombre = personaje.getNombre();
-            p.edad = personaje.getEdad();
-            p.historia = personaje.getHistoria();
-            p.peso = personaje.getPeso();
-
-            for (Pelicula pelicula : personaje.getPeliculas()) {
-
-                ContenidoModel c = new ContenidoModel();
-                c.id = pelicula.getPeliculaId();
-                c.titulo = pelicula.getTitulo();
-
-                p.peliculas.add(c);
-            }
-
-            for (Serie serie : personaje.getSeries()) {
-
-                ContenidoModel c = new ContenidoModel();
-                c.id = serie.getSerieId();
-                c.titulo = serie.getTitulo();
-
-                p.series.add(c);
-            }
-
+            PersonajeModel p = this.detallarPersonaje(personaje);
             lista.add(p);
+
         }
 
         return ResponseEntity.ok(lista);
+
     }
 
     @DeleteMapping
-    public ResponseEntity<GenericResponse> delete(@RequestParam (value = "id") Integer id) {
+    public ResponseEntity<GenericResponse> delete(@RequestParam(value = "id") Integer id) {
+
         Personaje personaje = personajeService.findById(id);
         GenericResponse r = new GenericResponse();
 
         if (personaje != null) {
+
+            personajeService.delete(personaje);
 
             r.isOk = true;
             r.id = personaje.getPersonajeId();
@@ -147,15 +141,158 @@ public class PersonajeController {
     }
 
     @GetMapping(params = "name")
-    public ResponseEntity<PersonajeResponse> findByNombre(@RequestParam (value = "name") String name) {
+    public ResponseEntity<?> findByNombre(@RequestParam(value = "name") String name) {
 
         Personaje personaje = personajeService.findByName(name);
-        PersonajeResponse p = new PersonajeResponse();
-        p.nombre = personaje.getNombre();
+
+        if (personaje != null) {
+
+            PersonajeModel p = this.detallarPersonaje(personaje);
+
+            return ResponseEntity.ok(p);
+        }
+
+        GenericResponse r = new GenericResponse();
+        r.isOk = false;
+        r.message = "Ese nombre no corresponde a ningun personaje.";
+
+        return ResponseEntity.badRequest().body(r);
+
+    }
+
+    @GetMapping(params = "age")
+    public ResponseEntity<?> findByEdad(@RequestParam(value = "age") Integer age) {
+
+        List<Personaje> personajes = personajeService.findByEdad(age);
+
+        if (personajes.isEmpty()) {
+
+            GenericResponse r = new GenericResponse();
+            r.isOk = false;
+            r.message = "No existe ningun personaje de esa edad.";
+
+            return ResponseEntity.badRequest().body(r);
+        }
+
+        List<PersonajeModel> lista = new ArrayList<>();
+
+        for (Personaje personaje : personajes) {
+
+            PersonajeModel p = this.detallarPersonaje(personaje);
+            lista.add(p);
+        }
+
+        return ResponseEntity.ok(lista);
+
+    }
+
+    @GetMapping(params = "peso")
+    public ResponseEntity<?> findByPeso(@RequestParam(value = "peso") Double peso) {
+
+        List<Personaje> personajes = personajeService.findByPeso(peso);
+
+        if (personajes.isEmpty()) {
+
+            GenericResponse r = new GenericResponse();
+            r.isOk = false;
+            r.message = "No existe ningun personaje con ese peso.";
+
+            return ResponseEntity.badRequest().body(r);
+        }
+
+        List<PersonajeModel> lista = new ArrayList<>();
+
+        for (Personaje personaje : personajes) {
+
+            PersonajeModel p = this.detallarPersonaje(personaje);
+            lista.add(p);
+        }
+
+        return ResponseEntity.ok(lista);
+
+    }
+
+    @GetMapping(params = "series")
+    public ResponseEntity<?> findBySerie(@RequestParam(value = "series") Integer serieId) {
+
+        List<Personaje> personajes = personajeService.findBySerie(serieId);
+
+        if (personajes.isEmpty()) {
+
+            GenericResponse r = new GenericResponse();
+            r.isOk = false;
+            r.message = "No existe ningun personaje registrado de esa serie";
+
+            return ResponseEntity.badRequest().body(r);
+        }
+
+        List<PersonajeModel> lista = new ArrayList<>();
+
+        for (Personaje personaje : personajes) {
+
+            PersonajeModel p = this.detallarPersonaje(personaje);
+            lista.add(p);
+        }
+
+        return ResponseEntity.ok(lista);
+
+    }
+
+    @GetMapping(params = "movies")
+    public ResponseEntity<?> findByPelicula(@RequestParam(value = "movies") Integer movieId) {
+
+        List<Personaje> personajes = personajeService.findByPelicula(movieId);
+
+        if (personajes.isEmpty()) {
+
+            GenericResponse r = new GenericResponse();
+            r.isOk = false;
+            r.message = "No existe ningun personaje registrado de esa pelicula.";
+
+            return ResponseEntity.badRequest().body(r);
+        }
+
+        List<PersonajeModel> lista = new ArrayList<>();
+
+        for (Personaje personaje : personajes) {
+
+            PersonajeModel p = this.detallarPersonaje(personaje);
+            lista.add(p);
+        }
+
+        return ResponseEntity.ok(lista);
+
+    }
+
+    public PersonajeModel detallarPersonaje(Personaje personaje) {
+
+        PersonajeModel p = new PersonajeModel();
+
         p.imagen = personaje.getImagen();
+        p.nombre = personaje.getNombre();
+        p.edad = personaje.getEdad();
+        p.historia = personaje.getHistoria();
+        p.peso = personaje.getPeso();
 
-        return ResponseEntity.ok(p);
+        for (Pelicula pelicula : personaje.getPeliculas()) {
 
+            ContenidoModel c = new ContenidoModel();
+            c.id = pelicula.getPeliculaId();
+            c.titulo = pelicula.getTitulo();
+
+            p.peliculas.add(c);
+        }
+
+        for (Serie serie : personaje.getSeries()) {
+
+            ContenidoModel c = new ContenidoModel();
+            c.id = serie.getSerieId();
+            c.titulo = serie.getTitulo();
+
+            p.series.add(c);
+        }
+
+        return p;
     }
 
 }

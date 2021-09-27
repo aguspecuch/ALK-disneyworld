@@ -15,4 +15,8 @@ public class SerieService {
     public Serie findBySerieId(Integer id) {
         return serieRepo.findBySerieId(id);
     }
+
+    public Serie findByTitulo(String titulo) {
+        return serieRepo.findByTitulo(titulo);
+    }
 }

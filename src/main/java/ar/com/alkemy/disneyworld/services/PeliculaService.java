@@ -15,4 +15,8 @@ public class PeliculaService {
     public Pelicula findByPeliculaId(Integer id) {
         return peliculaRepo.findByPeliculaId(id);
     }
+
+    public Pelicula findByTitulo(String titulo) {
+        return peliculaRepo.findByTitulo(titulo);
+    }
 }
