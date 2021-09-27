@@ -13,7 +13,7 @@ Para poder realizar peticiones a los endpoints el usuario deb estar logueado y c
 
 ## 📚 Documentacion:
 
-- Documentacion de cada endpoint en Postman: xxxxxxxxxx
+- Documentacion de cada endpoint en Postman: https://documenter.getpostman.com/view/16169885/UUxzA7bN
 
 </br>
 </br>
