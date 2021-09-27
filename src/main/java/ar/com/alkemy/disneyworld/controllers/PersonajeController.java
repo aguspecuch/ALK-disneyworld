@@ -55,10 +55,7 @@ public class PersonajeController {
 
         personajeService.create(personaje);
 
-        GenericResponse r = new GenericResponse();
-        r.isOk = true;
-        r.id = personaje.getPersonajeId();
-        r.message = "Personaje creado con exito.";
+        GenericResponse r = new GenericResponse(true, personaje.getPersonajeId(), "Personaje creado con exito.");
 
         return ResponseEntity.ok(r);
     }
@@ -78,10 +75,7 @@ public class PersonajeController {
         Personaje personaje = personajeService.create(personajeModel.nombre, personajeModel.imagen, personajeModel.edad,
                 personajeModel.peso, personajeModel.historia, peliculas);
 
-        GenericResponse r = new GenericResponse();
-        r.isOk = true;
-        r.id = personaje.getPersonajeId();
-        r.message = "Personaje creado con exito.";
+        GenericResponse r = new GenericResponse(true, personaje.getPersonajeId(), "Personaje creado con exito.");
 
         return ResponseEntity.ok(r);
     }
@@ -139,9 +133,7 @@ public class PersonajeController {
             return ResponseEntity.ok(p);
         }
 
-        GenericResponse r = new GenericResponse();
-        r.isOk = false;
-        r.message = "Ese nombre no corresponde a ningun personaje.";
+        GenericResponse r = new GenericResponse(false, "Ese nombre no corresponde a ningun personaje.");
 
         return ResponseEntity.badRequest().body(r);
 
@@ -154,9 +146,7 @@ public class PersonajeController {
 
         if (personajes.isEmpty()) {
 
-            GenericResponse r = new GenericResponse();
-            r.isOk = false;
-            r.message = "No existe ningun personaje de esa edad.";
+            GenericResponse r = new GenericResponse(false, "No existe ningun personaje de esa edad.");
 
             return ResponseEntity.badRequest().body(r);
         }
@@ -180,9 +170,7 @@ public class PersonajeController {
 
         if (personajes.isEmpty()) {
 
-            GenericResponse r = new GenericResponse();
-            r.isOk = false;
-            r.message = "No existe ningun personaje con ese peso.";
+            GenericResponse r = new GenericResponse(false, "No existe ningun personaje con ese peso.");
 
             return ResponseEntity.badRequest().body(r);
         }
@@ -206,9 +194,7 @@ public class PersonajeController {
 
         if (personajes.isEmpty()) {
 
-            GenericResponse r = new GenericResponse();
-            r.isOk = false;
-            r.message = "No existe ningun personaje registrado de esa pelicula.";
+            GenericResponse r = new GenericResponse(false, "No existe ningun personaje registrado de esa pelicula.");
 
             return ResponseEntity.badRequest().body(r);
         }
@@ -248,4 +234,3 @@ public class PersonajeController {
     }
 
 }
-
