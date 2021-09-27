@@ -1,5 +1,6 @@
 package ar.com.alkemy.disneyworld.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class Pelicula {
     private Date fechaCreacion;
     private Integer calificacion;
     @ManyToMany(mappedBy="peliculas", fetch = FetchType.LAZY)
-    private List<Personaje> personajes;
+    private List<Personaje> personajes = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "genero_id", referencedColumnName = "genero_id")
     private Genero genero;

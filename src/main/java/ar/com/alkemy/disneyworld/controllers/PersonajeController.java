@@ -123,7 +123,7 @@ public class PersonajeController {
 
     }
 
-    @DeleteMapping
+    @DeleteMapping(params="id")
     public ResponseEntity<GenericResponse> delete(@RequestParam(value = "id") Integer id) {
 
         Personaje personaje = personajeService.findById(id);

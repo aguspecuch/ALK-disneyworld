@@ -8,5 +8,6 @@ import ar.com.alkemy.disneyworld.entities.Genero;
 @Repository
 public interface GeneroRepository extends JpaRepository <Genero, Integer>{
     
+    Genero findByGeneroId(Integer id);
     Genero findByNombre(String nombre);
 }

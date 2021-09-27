@@ -12,6 +12,10 @@ public class GeneroService {
     @Autowired
     GeneroRepository generoRepo;
 
+    public Genero findByGeneroId(Integer id) {
+        return generoRepo.findByGeneroId(id);
+    }
+
     public Genero findByNombre(String nombre) {
         return generoRepo.findByNombre(nombre);
     }
