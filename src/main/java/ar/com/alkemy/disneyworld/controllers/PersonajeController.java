@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ar.com.alkemy.disneyworld.entities.Pelicula;
 import ar.com.alkemy.disneyworld.entities.Personaje;
 import ar.com.alkemy.disneyworld.models.PersonajeModel;
-import ar.com.alkemy.disneyworld.models.PeliculaModel;
 import ar.com.alkemy.disneyworld.models.response.GenericResponse;
 import ar.com.alkemy.disneyworld.models.response.PersonajeResponse;
 import ar.com.alkemy.disneyworld.services.PeliculaService;
@@ -78,19 +77,33 @@ public class PersonajeController {
 
         List<Pelicula> peliculas = new ArrayList<>();
 
-        for (PeliculaModel pelicula : personajeModel.peliculas) {
+        for (String titulo : personajeModel.peliculas) {
 
-            Pelicula p = peliculaService.findByPeliculaId(pelicula.id);
+            Pelicula p = peliculaService.findByTitulo(titulo);
             peliculas.add(p);
 
         }
 
-        Personaje personaje = personajeService.create(personajeModel.nombre, personajeModel.imagen, personajeModel.edad,
-                personajeModel.peso, personajeModel.historia, peliculas);
+        GenericResponse r = new GenericResponse();
 
-        GenericResponse r = new GenericResponse(true, personaje.getPersonajeId(), "Personaje creado con exito.");
+        if (personajeService.chequearNombre(personajeModel.nombre)) {
 
-        return ResponseEntity.ok(r);
+            Personaje personaje = personajeService.create(personajeModel.nombre, personajeModel.imagen, personajeModel.edad,
+                    personajeModel.peso, personajeModel.historia, peliculas);
+
+            r.isOk = true;
+            r.id = personaje.getPersonajeId();
+            r.message = "Personaje creado con exito.";
+
+            return ResponseEntity.ok(r);
+
+        }
+
+        r.isOk = false;
+        r.message = "Ya se encuentra registrado un personaje con el mismo nombre";
+
+        return ResponseEntity.badRequest().body(r);
+
     }
 
     @GetMapping("/details")
@@ -236,11 +249,7 @@ public class PersonajeController {
 
         for (Pelicula pelicula : personaje.getPeliculas()) {
 
-            PeliculaModel c = new PeliculaModel();
-            c.id = pelicula.getPeliculaId();
-            c.titulo = pelicula.getTitulo();
-
-            p.peliculas.add(c);
+            p.peliculas.add(pelicula.getTitulo());
         }
 
         return p;

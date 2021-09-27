@@ -20,7 +20,12 @@ public class PersonajeService {
     PeliculaService peliculaService;
 
     public Personaje create(Personaje personaje) {
-        return personajeRepo.save(personaje);
+        
+        if (!this.chequearDatos(personaje)) {
+            return personajeRepo.save(personaje);
+        }
+
+        return null;
     }
 
     public Personaje create(String nombre, String imagen, Integer edad, Double peso, String historia,
@@ -37,7 +42,12 @@ public class PersonajeService {
             personaje.agregarPelicula(pelicula);
         }
 
-        return personajeRepo.save(personaje);
+        if (!this.chequearDatos(personaje)) {
+            return personajeRepo.save(personaje);
+        }
+
+        return null;
+
     }
 
     public Personaje update(Personaje personaje) {

@@ -1,7 +1,11 @@
 package ar.com.alkemy.disneyworld.models;
 
+import java.util.Date;
+
 public class PeliculaModel {
-    
-    public Integer id;
+
+    public String imagen;
     public String titulo;
+    public Date fechaCreacion;
+    
 }

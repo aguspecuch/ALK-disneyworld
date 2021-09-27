@@ -1,5 +1,7 @@
 package ar.com.alkemy.disneyworld.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,10 @@ public class PeliculaService {
     public void delete(Integer id) {
         Pelicula pelicula = this.findByPeliculaId(id);
         peliculaRepo.delete(pelicula);
+    }
+
+    public List<Pelicula> findAll() {
+        return peliculaRepo.findAll();
     }
 
     public Pelicula findByPeliculaId(Integer id) {
