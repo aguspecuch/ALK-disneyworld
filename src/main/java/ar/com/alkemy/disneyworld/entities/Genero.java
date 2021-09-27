@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="genero")
 public class Genero {
@@ -24,6 +26,7 @@ public class Genero {
     private String nombre;
     private String imagen;
     @OneToMany(mappedBy = "genero", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Pelicula> peliculas = new ArrayList<>();
     
     public Integer getGeneroId() {

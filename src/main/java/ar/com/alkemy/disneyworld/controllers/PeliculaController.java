@@ -10,9 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import ar.com.alkemy.disneyworld.entities.Pelicula;
+import ar.com.alkemy.disneyworld.entities.Personaje;
 import ar.com.alkemy.disneyworld.models.PeliculaModel;
+import ar.com.alkemy.disneyworld.models.response.PeliculaResponse;
 import ar.com.alkemy.disneyworld.services.PeliculaService;
-
 
 @RestController
 @RequestMapping("/movies")
@@ -22,7 +23,7 @@ public class PeliculaController {
     PeliculaService peliculaService;
 
     @GetMapping
-    public ResponseEntity<List<PeliculaModel>> listado() {
+    public ResponseEntity<List<PeliculaModel>> listar() {
 
         List<Pelicula> peliculas = peliculaService.findAll();
         List<PeliculaModel> lista = new ArrayList<>();
@@ -37,6 +38,34 @@ public class PeliculaController {
         }
 
         return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<List<PeliculaResponse>> listarDetalles() {
+
+        List<PeliculaResponse> lista = new ArrayList<>();
+
+        for (Pelicula pelicula : peliculaService.findAll()) {
+
+            PeliculaResponse p = new PeliculaResponse();
+            p.peliculaId = pelicula.getPeliculaId();
+            p.titulo = pelicula.getTitulo();
+            p.imagen = pelicula.getImagen();
+            p.fechaCreacion = pelicula.getFechaCreacion();
+            p.calificacion = pelicula.getCalificacion();
+            p.genero = pelicula.getGenero().getNombre();
+
+            for (Personaje personaje : pelicula.getPersonajes()) {
+
+                p.personajes.add(personaje.getNombre());
+            }
+
+            lista.add(p);
+
+        }
+
+        return ResponseEntity.ok(lista);
+
     }
 
 }
