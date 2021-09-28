@@ -21,13 +21,13 @@ public class EmailService {
     @Value("${spring.sendgrid.fromEmail}")
     private String fromEmail;
 
-
     public void sendEmail(Usuario user) {
 
         Email from = new Email(fromEmail);
         String subject = "¡Bienvenido a DisneyWorld!";
         Email to = new Email(user.getEmail());
-        Content content = new Content("text/plain", "Bienvenido "+user.getFullName()+".\nTu nombre de usuario es: "+user.getUsername()+"\n¡Gracias por registrarte!");
+        Content content = new Content("text/plain", "Bienvenido " + user.getFullName() + ".\nTu nombre de usuario es: "
+                + user.getUsername() + "\n¡Gracias por registrarte!");
         Mail mail = new Mail(from, subject, to, content);
 
         SendGrid sg = new SendGrid(api_key);
@@ -43,5 +43,3 @@ public class EmailService {
     }
 
 }
-
-

@@ -31,7 +31,7 @@ public class Pelicula {
     @Temporal(TemporalType.DATE)
     private Date fechaCreacion;
     private Integer calificacion;
-    @ManyToMany(mappedBy="peliculas", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "peliculas", fetch = FetchType.LAZY)
     private List<Personaje> personajes = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "genero_id", referencedColumnName = "genero_id")
