@@ -7,12 +7,16 @@ import org.springframework.stereotype.Service;
 import ar.com.alkemy.disneyworld.entities.Usuario;
 import ar.com.alkemy.disneyworld.repos.UsuarioRepository;
 import ar.com.alkemy.disneyworld.security.Crypto;
+import ar.com.alkemy.disneyworld.system.EmailService;
 
 @Service
 public class UsuarioService {
 
     @Autowired
     UsuarioRepository repo;
+
+    @Autowired
+    EmailService emailService;
 
     public Usuario registrar(String fullName, String username, String password, String email) {
 
@@ -21,6 +25,8 @@ public class UsuarioService {
         u.setUsername(username);
         u.setPassword(Crypto.encrypt(password, email.toLowerCase()));
         u.setEmail(email);
+
+        emailService.sendEmail(u);
 
         return repo.save(u);
     }
