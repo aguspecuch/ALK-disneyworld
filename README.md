@@ -13,7 +13,12 @@ Para poder realizar peticiones a los endpoints el usuario deb estar logueado y c
 
 ## 📚 Documentacion:
 
-- Documentacion de cada endpoint en Postman: <a href="https://documenter.getpostman.com/view/16169885/UUxzA7bN"> DOC </a>
+- Documentacion de cada endpoint en Postman: <a href="https://documenter.getpostman.com/view/16169885/UUxzA7bN"> DOCUMENTACION</a>.
+
+## 	:bangbang: Requerimientos - application.properties:
+
+- Configurar <strong>URL, USERNAME y PASSWORD</strong> de la base de datos.
+- Configurar <strong>APIKEY y EMAIL</strong> con la APIKEY de SendGrid y el email desde donde se van a enviar los mails de registro de usuarios.
 
 </br>
 </br>
