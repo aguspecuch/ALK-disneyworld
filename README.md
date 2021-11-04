@@ -1,4 +1,4 @@
-<h1 align="center"> alkemy-disneyworld 👸</h1>
+<h1 align="center"> 👸 alkemy-disneyworld 👸</h1>
 
 Challenge para Alkemy Labs que consiste en una API para explorar el mundo de Disney, la cual permitirá conocer y modificar los personajes que lo componen y entender en qué películas estos participaron.
 
